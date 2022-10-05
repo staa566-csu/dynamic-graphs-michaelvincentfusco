@@ -1,0 +1,72 @@
+---
+title: "HW2"
+author: "Michael Fusco"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Load relevant libraries.
+
+```{r Libraries}
+library(dygraphs)
+library(dplyr)
+library(xts)
+library(RColorBrewer)
+```
+
+Load data.
+
+```{r Data}
+stock <- read.csv("MacroTrends_Data_Download_TSLA_Edited.csv", header = TRUE)
+stock$date <- as.Date(stock$date)
+```
+
+Create xts object.
+
+```{r xts}
+xts <- xts::xts(x = stock %>% select(low, close, high),
+								order.by = stock %>% pull(date))
+```
+
+Create graph.
+
+```{r Graph}
+dygraph(xts,
+				main = "Tesla Stock Prices Over Time",
+				xlab = "Date",
+				ylab = "Stock Price",) %>%
+	dySeries(c("low", "close", "high"),
+					 label = "Stock Price",
+					 color = "grey",
+					 fillGraph = "grey") %>%
+	dyOptions(axisLineWidth = 1.5, fillGraph = FALSE, drawGrid = FALSE) %>%
+	dyEvent(x = "2018-4-2",
+					label = "April Fools Twitter Bankrupcy Joke",
+					labelLoc = "top",
+					strokePattern = "solid",
+					color = "hotpink") %>%
+	dyEvent(x = "2018-8-7",
+					label = "Announcement to Consider Taking Tesla Private",
+					labelLoc = "top",
+					strokePattern = "solid",
+					color = "limegreen") %>%
+	dyEvent(x = "2019-2-19",
+					label = "Annualized Production Rate Prediciton Mistake",
+					labelLoc = "top",
+					strokePattern = "solid",
+					color = "slateblue") %>%
+	dyEvent(x = "2020-5-1",
+					label = "States Stock is too High",
+					labelLoc = "top",
+					strokePattern = "solid",
+					color = "palevioletred") %>%
+	dyEvent(x = "2021-11-1",
+					label = "Downplay Hertz Agreement",
+					labelLoc = "bottom",
+					strokePattern = "solid",
+					color = "orangered") %>%
+  dyRangeSelector(height = 60,
+  								strokeColor = "grey",
+  								fillColor = "lightgrey")
+```
+
